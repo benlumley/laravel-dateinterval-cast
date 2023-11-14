@@ -21,6 +21,9 @@ class DateIntervalCast implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes)
     {
+        if (is_null($value)) {
+            return;
+        }
         try {
             return new \DateInterval($value);
         } catch (\Exception $e) {
@@ -39,9 +42,11 @@ class DateIntervalCast implements CastsAttributes
      */
     public function set($model, string $key, $value, array $attributes)
     {
+        if (is_null($value)) {
+            return;
+        }
         try {
             $value = is_string($value) ? CarbonInterval::create($value) : $value;
-
             return [$key => CarbonInterval::getDateIntervalSpec($value)];
         } catch (\Exception $e) {
             throw InvalidIsoDuration::make($value, $e);

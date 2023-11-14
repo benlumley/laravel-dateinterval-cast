@@ -28,6 +28,17 @@ class TestCastsIntervals extends TestCase
         $this->assertInstanceOf(\DateInterval::class, $model->date_interval);
         $this->assertDatabaseHas('test', ['id' => $model->id, 'date_interval' => 'P1D']);
     }
+    public function testForNullableColumnsDateIntervalCastIsSkippedIfColumnValueIsNull()
+    {
+        $model = new TestEloquentModelWithCustomCasts();
+        $model->date_interval = null;
+        $this->assertNotInstanceOf(\DateInterval::class, $model->date_interval);
+        $this->assertNull($model->getAttributes()['date_interval']);
+        $model->save();
+        $model->fresh();
+        $this->assertNotInstanceOf(\DateInterval::class, $model->date_interval);
+        $this->assertDatabaseHas('test', ['id' => $model->id, 'date_interval' => null]);
+    }
 
     public function testCarbonIntervalCast()
     {
@@ -42,6 +53,17 @@ class TestCastsIntervals extends TestCase
 
         $this->assertInstanceOf(CarbonInterval::class, $model->carbon_interval);
         $this->assertDatabaseHas('test', ['id' => $model->id, 'carbon_interval' => 'P4D']);
+    }
+    public function testForNullableColumnsCarbonIntervalCastIsSkippedIfColumnValueIsNull()
+    {
+        $model = new TestEloquentModelWithCustomCasts();
+        $model->carbon_interval = null;
+        $this->assertNotInstanceOf(CarbonInterval::class, $model->carbon_interval);
+        $this->assertSame(null, $model->getAttributes()['carbon_interval']);
+        $model->save();
+        $model->fresh();
+        $this->assertNotInstanceOf(CarbonInterval::class, $model->carbon_interval);
+        $this->assertDatabaseHas('test', ['id' => $model->id, 'carbon_interval' => null]);
     }
 
     public function testThrowsExceptionOnInvalidDateInterval()

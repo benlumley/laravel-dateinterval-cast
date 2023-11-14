@@ -20,6 +20,9 @@ class CarbonIntervalCast extends DateIntervalCast
      */
     public function get($model, string $key, $value, array $attributes)
     {
+        if (is_null($value)) {
+            return;
+        }
         try {
             return CarbonInterval::create($value);
         } catch (\Exception $e) {
